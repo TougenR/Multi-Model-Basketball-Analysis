@@ -1,0 +1,25 @@
+1) TRAINING 2 MODEL (ball-detector, player-detector)
+    - train two models: player-detector(100 epochs) and ball-detector(250 epochs).
+
+2) WORKING ON: player-detector module
+    - Detect person on each frame
+    - Person re-id for person tracking problem: SOLUTION: bytetrack algorithm
+
+3) WORKING ON: ball-detector module
+    - Detect ball on each frame (choose the highest confidence score)
+    - PROBLEM: There are some wrong and miss predict ball positions
+        => SOLUTION: Delete wrong predict, and fill the miss predict with interpolation module
+
+4) Ball acquisition
+
+
+
+
+
+
+
+
+3 point shots recognition:
+    - using resnet50
+    - annotation stephen curry for 3 point shot pose
+
