@@ -78,9 +78,9 @@ def main():
                                                                  stub_path="stubs/stub_court_keypoints.pkl"
                                                                  )
 
-    # tactical view converter
+    # Initialize ltactical view converter
     tactical_view_converter = TacticalViewConverter(court_image_path="./images/basketball_court.png")
-
+    court_keypoint = tactical_view_converter.validate_keypoints(court_keypoint)
     
     # Draw Object
     output_video_frames = ball_tracks_drawer.draw(

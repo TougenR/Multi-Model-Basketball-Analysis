@@ -5,8 +5,7 @@ class CourtKeypointsDrawer():
         self.keypoint_color = "00FF88"  # Bright green color
         self.outline_color = "FFFFFF"   # White outline
     
-    def draw(self, video_frame, court_keypoints_detection):
-        print(court_keypoints_detection)        
+    def draw(self, video_frame, court_keypoints_detection):        
         # use to draw keypoint outlines (larger radius)
         vertex_outline_annotator = sv.VertexAnnotator(
             color = sv.Color.from_hex(self.outline_color),
