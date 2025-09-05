@@ -17,7 +17,7 @@ from drawers import (
 
 def main():
     # read video
-    video_frames = read_video("./input_videos/video_1.mp4")
+    video_frames = read_video("./input_videos/video_3.mp4")
 
     # Initialize models
     player_tracker = PlayerTracker("./models/player_detector.pt")
