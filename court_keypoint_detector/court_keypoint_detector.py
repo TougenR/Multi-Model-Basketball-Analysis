@@ -15,7 +15,7 @@ class CourtKeypointDetector():
             if len(court_keypoints_detection) == len(frame):
                 return court_keypoints_detection
 
-        batch_size = 20
+        batch_size = 15
         court_keypoints_detection = []
         for i in range(0, len(frame), batch_size):
             batch_frame = frame[i:i+batch_size]
