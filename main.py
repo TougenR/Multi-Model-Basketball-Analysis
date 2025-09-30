@@ -1,3 +1,4 @@
+import numpy as np
 import tactical_view_converter
 from tracker import PlayerTracker, BallTracker
 from utils import read_video, save_video
@@ -41,7 +42,7 @@ def main():
         read_from_stub=True,
         stub_path="stubs/stub_ball_tracks.pkl"
     )
-
+    
     # Remove wrong ball positions
     ball_tracks = ball_tracker.remove_wrong_detections(ball_tracks)
     # Interpolate ball tracks
@@ -55,7 +56,12 @@ def main():
     pass_and_interception_drawer = PassInterceptionTableDrawer(
         table_position="top_right", transparency=0.6)
     court_keypoints_drawer = CourtKeypointsDrawer()
-    tactical_view_drawer = TacticalViewDrawer()
+
+    # Initialize tactical view drawer with perspective mode and top positioning
+    tactical_view_drawer = TacticalViewDrawer(
+        perspective_mode=True,
+        transparency=0.7  # Higher transparency for better overlay visibility
+    )
 
     # Player team assigner
     team_assigner = TeamAssigner()
@@ -65,6 +71,8 @@ def main():
         read_from_stub=True,
         stub_path="stubs/stub_player_assignment.pkl"
     )
+
+    # Team assignments loaded successfully
 
     # Ball Acquisition
     ball_acquisition_detector = BallAcquisitionDetector()
@@ -78,27 +86,22 @@ def main():
     interceptions = pass_and_interception_detector.detect_interception(
         ball_acquisition, players_assignment)
 
-    # court keypoints detector
+    # court keypoints detector - use cached stubs for consistency
+    print("Loading court keypoints from cached stubs...")
     court_keypoint = court_keypoint_detector.key_court_keypoints(video_frames,
                                                                  read_from_stub=True,
                                                                  stub_path="stubs/stub_court_keypoints.pkl"
                                                                  )
+    print(f"Loaded {len(court_keypoint)} frames of court keypoints")
 
-    # Initialize tactical view converter
-    # tactical_view_converter = TacticalViewConverter(court_image_path="./images/basketball_court.png")
-    # court_keypoint = tactical_view_converter.validate_keypoints(court_keypoint)
-
+    # Initialize tactical view converter with original approach (hardcoded template keypoints)
+    # Use hardcoded court template for consistent layout, detected keypoints only for transformation
     court = CourtModel(width=400, height=200, actual_width_meters=30)
     tactical_view_converter = TacticalViewConverterOptimized(court_model=court)
 
-# Custom validation parameters
-    court_keypoint = tactical_view_converter.validate_keypoints(
-        court_keypoint,
-        distance_threshold=0.5,      # 20% max scale deviation
-        min_failure_ratio=0.8,        # 50% failures to mark outlier
-        min_keypoints=3,              # Require at least 6 keypoints
-        scale_method="trimmed_mean"   # Robust scale estimation
-    )
+    # Skip validation to use raw detected keypoints for transformation matrix computation
+    # Template keypoints are hardcoded in court model for consistent court layout
+    print("Using hardcoded court template for tactical view with detected keypoints for transformation")
 
     # Draw Object
     output_video_frames = ball_tracks_drawer.draw(
@@ -130,12 +133,18 @@ def main():
         court_keypoint
     )
 
+    # Court keypoints are ready for transformation (handled internally by converter)
+
     output_video_frames = tactical_view_drawer.draw(
         output_video_frames,
         tactical_view_converter.court_image_path,
         tactical_view_converter.width,
         tactical_view_converter.height,
-        tactical_view_converter.key_points
+        court_keypoint,
+        player_tracks=player_tracks,
+        ball_tracks=ball_tracks,
+        players_assignment=players_assignment,
+        converter=tactical_view_converter
     )
 
     # save video
