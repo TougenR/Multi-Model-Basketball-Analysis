@@ -8,3 +8,12 @@ from .geometry import (
     validate_middle_line,
     frames_to_arrays
 )
+from .gpu_utils import (
+    check_gpu_available,
+    get_device,
+    setup_model_for_gpu,
+    get_optimal_batch_size,
+    optimize_inference_settings,
+    print_gpu_info,
+    clear_gpu_cache
+)

@@ -1,3 +1,6 @@
 *.log
 __pycache__/
 models/
+AGENTS.md
+CLAUDE.md
+stubs/

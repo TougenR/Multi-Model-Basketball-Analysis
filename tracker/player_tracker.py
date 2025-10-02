@@ -1,21 +1,39 @@
-from utils import save_stub, read_stub
+from utils import save_stub, read_stub, get_device, setup_model_for_gpu, get_optimal_batch_size, optimize_inference_settings
 from ultralytics import YOLO
 import supervision as sv
+import torch
 import sys
 sys.path.append("../")
 
 
 class PlayerTracker():
     def __init__(self, model_path):
+        # Initialize GPU settings
+        optimize_inference_settings()
+        self.device = get_device()
+
+        # Load and setup model for GPU
         self.model = YOLO(model_path)
+        self.model, self.device = setup_model_for_gpu(self.model, self.device)
+
+        # Optimize batch size based on device
+        self.batch_size = get_optimal_batch_size(self.device.type, 'medium')
+
+        # Initialize tracker
         self.tracker = sv.ByteTrack()
 
     def detect_frames(self, frames):
-        batch_size = 16
         detections = []
-        for i in range(0, len(frames), batch_size):
-            batch_frames = frames[i:i+batch_size]
-            batch_detections = self.model.predict(batch_frames, conf=0.5)
+        for i in range(0, len(frames), self.batch_size):
+            batch_frames = frames[i:i+self.batch_size]
+
+            # Use GPU device for inference
+            batch_detections = self.model.predict(
+                batch_frames,
+                conf=0.5,
+                device=self.device,
+                verbose=False  # Reduce logging for better performance
+            )
             detections.extend(batch_detections)
 
         return detections

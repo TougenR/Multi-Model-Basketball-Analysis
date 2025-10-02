@@ -7,7 +7,6 @@ from ball_acquisition import BallAcquisitionDetector
 from pass_and_interception import PassAndInterceptionDetector
 from court_keypoint_detector import CourtKeypointDetector
 from tactical_view_converter import (
-    TacticalViewConverter,
     TacticalViewConverterOptimized,
     CourtModel
 )
@@ -26,10 +25,10 @@ def main():
     video_frames = read_video("./input_videos/video_1.mp4")
 
     # Initialize models
-    player_tracker = PlayerTracker("./models/player_detector.pt")
-    ball_tracker = BallTracker("./models/ball_detector_model.pt")
+    player_tracker = PlayerTracker("./models/player_detector_2.pt")
+    ball_tracker = BallTracker("./models/ball_detector_model_2.pt")
     court_keypoint_detector = CourtKeypointDetector(
-        "./models/court_keypoint_detector.pt")
+        "./models/court_keypoint_detector_2.pt")
 
     player_tracks = player_tracker.objects_track(
         video_frames,
